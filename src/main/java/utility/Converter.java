@@ -6,11 +6,22 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import view.GUI;
 
 public class Converter {
 
-    private WebDriver driver;
+    private String videoImage;
+    private GUI gui;
 
+    public Converter(GUI gui) {
+        this.gui = gui;
+    }
+
+    /**
+     * Starts a webdriver and grabs all the neccessary elements before starting the conversion.
+     * @param url
+     * @throws InterruptedException
+     */
     public void convertVideo(String url) throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/webdriver/chromedriver.exe");
         WebDriver driver = new ChromeDriver(settings());
@@ -20,6 +31,7 @@ public class Converter {
         driver.findElement(By.className("search__input")).sendKeys(url + Keys.ENTER);
 
         Thread.sleep(2000);
+        videoImage = driver.findElement(By.cssSelector("#content-wrapper > div > img")).getAttribute("src");
         driver.findElement(By.className("btn-action")).click();
 
         Thread.sleep(1000);
@@ -35,15 +47,30 @@ public class Converter {
             videoTitle = videoTitle.replace("|", "-");
         }
         System.out.println(videoTitle);
-        String path = "src/downloads/" + videoTitle + ".mp4";
+        String path = "src/main/resources/downloads/" + videoTitle + ".mp4";
 
         driver.close();
+
+        //Sends the dlink, path and GUI object(For the progressbar) to Downloader.
+        Downloader downloader = new Downloader(dlink, path, gui);
     }
 
+    /**
+     * Sets the settings for the webdriver.
+     * @return
+     */
     public static ChromeOptions settings() {
         final ChromeOptions options = new ChromeOptions();
-        //options.addArguments("--headless");
+        options.addArguments("--headless");
 
         return options;
+    }
+
+    /**
+     * Returns the video image URL.
+     * @return
+     */
+    public String getVideoImage() {
+        return videoImage;
     }
 }

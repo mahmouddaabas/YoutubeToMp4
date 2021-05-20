@@ -1,11 +1,11 @@
 package run;
 
-import utility.Converter;
+import javafx.application.Application;
+import view.GUI;
 
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
-        Converter converter = new Converter();
-        converter.convertVideo("https://www.youtube.com/watch?v=-Nw8ZLI9tX0");
+        Application.launch(GUI.class, args);
     }
 }
