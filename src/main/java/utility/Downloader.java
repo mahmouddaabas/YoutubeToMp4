@@ -12,9 +12,8 @@ public class Downloader implements Runnable {
 
     private String dlink;
     private String path;
-    private Thread thread;
-    private boolean run;
     private GUI gui;
+    private Thread thread;
 
     /**
      * Constructs the class.
@@ -25,17 +24,15 @@ public class Downloader implements Runnable {
         this.dlink = dlink;
         this.path = path;
         this.gui = gui;
-        start();
     }
 
     /**
      * Starts the thread.
      */
     public void start() {
-        if(thread == null || !run) {
+        if(thread == null) {
             thread = new Thread(this);
             thread.start();
-            run = true;
         }
     }
 
@@ -64,8 +61,8 @@ public class Downloader implements Runnable {
                                 gui.setProgress(percent/100);
                             }
                             System.out.println("Finished.");
+                            //Sets the thread to null when finished.
                             thread = null;
-                            run = false;
                         }
                     }
                 } catch (Exception e) {

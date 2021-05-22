@@ -7,13 +7,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import utility.Converter;
-import utility.Downloader;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -27,6 +27,12 @@ public class GUI extends Application {
 
     @FXML
     private Button btnConvert;
+    @FXML
+    private Label lblVideoTitle;
+    @FXML
+    private Label lblYoutubeURL;
+    @FXML
+    private Label lblInvalidURL;
     @FXML
     private TextField txtUrl;
     @FXML
@@ -44,7 +50,7 @@ public class GUI extends Application {
      * Constructs the class.
      */
     public GUI() {
-        //Sends this class object to Converter.
+        //Sends this class object to the Converter class.
         this.converter = new Converter(this);
     }
 
@@ -57,7 +63,7 @@ public class GUI extends Application {
             addBackground();
             stage.getIcons().add(new Image(GUI.class.getResourceAsStream("/image/youtubeIcon.png")));
             stage.setTitle("Youtube To MP4 Converter.");
-            stage.setResizable(true);
+            stage.setResizable(false);
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
@@ -70,22 +76,38 @@ public class GUI extends Application {
      * Converts the URL given in the TextField.
      */
     public void convert() {
-        if(txtUrl != null || !txtUrl.getText().trim().isEmpty()) {
-            try {
-                converter.convertVideo(txtUrl.getText());
-                setVideoImage(converter.getVideoImage());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if(txtUrl != null && !txtUrl.getText().isEmpty() && txtUrl.getText().contains("youtube")) {
+                lblInvalidURL.setVisible(false);
+                lblYoutubeURL.setVisible(true);
+                //Resets the progress bar.
+                setProgress(0);
+                //Sends the inserted url to the converter class.
+                converter.start(txtUrl.getText());
+        }
+        else {
+            lblYoutubeURL.setVisible(false);
+            lblInvalidURL.setVisible(true);
         }
     }
 
+    /**
+     * Updates the progressbar from the Downloader class.
+     * @param progress
+     */
     public void setProgress(double progress) {
         progressBar.setProgress(progress);
     }
 
     /**
-     * Sets the video image on the GUI.
+     * Sets the title from the Converter class.
+     * @param title
+     */
+    public void setVideoTitle(String title) {
+        lblVideoTitle.setText(title);
+    }
+
+    /**
+     * Sets the video image on the GUI from the Converter class.
      * @param videoImage
      */
     public void setVideoImage(String videoImage) {
